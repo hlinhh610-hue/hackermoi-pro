@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="VocabHacker Pro - Hệ thống học từ vựng Hackers TOEIC thông minh với AI Cloze, Spaced Repetition (SM-2), Luyện nghe chính tả và Phản xạ.">
+  <title>VocabHacker Pro — Chinh phục Từ vựng TOEIC Thông Minh</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Sora:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app" class="app-layout">
+    <!-- Ambient Background Mesh & Grid -->
+    <div class="bg-orbs" aria-hidden="true">
+      <div class="bg-grid-pattern"></div>
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+      <div class="orb orb-3"></div>
+    </div>
+
+    <!-- Sidebar -->
+    <nav id="sidebar" class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo" onclick="app.navigateTo('dashboard')" style="cursor:pointer">
+          <div class="logo-icon">
+            <svg width="26" height="26" viewBox="0 0 28 28" fill="none">
+              <path d="M14 2L26 8V20L14 26L2 20V8L14 2Z" stroke="url(#logoGrad)" stroke-width="2.2" fill="none"/>
+              <path d="M14 7.5L20.5 11V17L14 20.5L7.5 17V11L14 7.5Z" fill="url(#logoGrad)"/>
+              <defs>
+                <linearGradient id="logoGrad" x1="2" y1="2" x2="26" y2="26">
+                  <stop offset="0%" stop-color="#818cf8"/>
+                  <stop offset="50%" stop-color="#c084fc"/>
+                  <stop offset="100%" stop-color="#38bdf8"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <div class="logo-text">
+            <div class="logo-title-row">
+              <span class="logo-title">VocabHacker</span>
+              <span class="pro-badge">PRO</span>
+            </div>
+            <span class="logo-subtitle">TOEIC Smart System</span>
+          </div>
+        </div>
+        <button id="sidebarToggle" class="sidebar-toggle" aria-label="Thu gọn thanh bên" title="Thu gọn / Mở rộng">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="sidebar-nav">
+        <div class="nav-section-label">TRUNG TÂM HỌC TẬP</div>
+        <button class="nav-item active" data-view="dashboard" id="nav-dashboard" title="Tổng quan & Phân tích">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/>
+            <rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>
+          </svg>
+          <span>Tổng quan</span>
+        </button>
+        <button class="nav-item" data-view="vocabulary" id="nav-vocabulary" title="Kho từ vựng thông minh">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+          </svg>
+          <span>Kho Từ Vựng</span>
+          <span class="nav-badge" id="navTotalBadge">0</span>
+        </button>
+        <button class="nav-item" data-view="flashcards" id="nav-flashcards" title="Flashcards 3D thông minh">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="4" width="20" height="16" rx="2.5"/><path d="M12 8v8M8 12h8"/>
+          </svg>
+          <span>Flashcards 3D</span>
+        </button>
+        <button class="nav-item" data-view="quiz" id="nav-quiz" title="Trắc nghiệm & TOEIC Part 5 Cloze">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r="0.5"/>
+          </svg>
+          <span>Trắc Nghiệm & Part 5</span>
+        </button>
+        <button class="nav-item" data-view="vocabdrill" id="nav-vocabdrill" title="Kiểm tra gõ từ & Luyện nghe">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+          </svg>
+          <span>Luyện Gõ & Nghe</span>
+        </button>
+        <button class="nav-item" data-view="matchgame" id="nav-matchgame" title="Trò chơi ghép thẻ tốc độ">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+          </svg>
+          <span>Phản Xạ Ghép Từ</span>
+          <span class="nav-badge nav-badge-hot">Mới</span>
+        </button>
+        <button class="nav-item" data-view="srs" id="nav-srs" title="Lặp lại ngắt quãng SM-2">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+            <path d="M3 3v5h5"/>
+            <path d="M12 7v5l4 2"/>
+          </svg>
+          <span>Ôn Tập SRS (SM-2)</span>
+          <span class="nav-badge nav-badge-warn hidden" id="navSrsDueBadge">0</span>
+        </button>
+
+        <div class="nav-section-label">LỘ TRÌNH 30 DAYS</div>
+        <div id="daysList" class="days-list">
+          <!-- Generated by JS -->
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="progress-summary">
+          <div class="progress-label">
+            <span>Tiến độ tổng thể</span>
+            <span id="overallPercent" class="mono-text">0%</span>
+          </div>
+          <div class="progress-bar-container">
+            <div id="overallProgressBar" class="progress-bar-fill" style="width: 0%"></div>
+          </div>
+        </div>
+        <div class="sidebar-data-actions">
+          <button class="data-action-btn data-export" onclick="app.exportData()" title="Tải file sao lưu dữ liệu học tập">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            <span>Sao lưu</span>
+          </button>
+          <button class="data-action-btn data-import" onclick="document.getElementById('importFileInput').click()" title="Khôi phục dữ liệu từ file JSON">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+            <span>Khôi phục</span>
+          </button>
+          <input type="file" id="importFileInput" accept=".json" style="display:none" onchange="app.importData(event)">
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="mainContent" class="main-content">
+      <!-- Top Bar -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button id="mobileSidebarToggle" class="mobile-sidebar-toggle" aria-label="Mở menu">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 6h18M3 12h18M3 18h18" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <div class="topbar-title-group">
+            <div class="topbar-title" id="topbarTitle">Tổng quan</div>
+            <div class="topbar-subtitle" id="topbarSubtitle">Hệ thống học từ vựng Hackers TOEIC thông minh</div>
+          </div>
+        </div>
+
+        <div class="topbar-actions">
+          <!-- Daily Goal Pill -->
+          <div class="daily-goal-pill" onclick="app.openGoalModal()" title="Mục tiêu hàng ngày (Click để chỉnh)">
+            <div class="dgp-ring">
+              <svg viewBox="0 0 36 36">
+                <path class="dgp-bg" d="M18 2.0845a15.9155 15.9155 0 0 1 0 31.831 15.9155 15.9155 0 0 1 0-31.831"/>
+                <path class="dgp-fill" id="topGoalRing" stroke-dasharray="0, 100" d="M18 2.0845a15.9155 15.9155 0 0 1 0 31.831 15.9155 15.9155 0 0 1 0-31.831"/>
+              </svg>
+              <span class="dgp-icon">🎯</span>
+            </div>
+            <div class="dgp-info">
+              <span class="dgp-label">Hôm nay</span>
+              <span class="dgp-val" id="topGoalText">0/20 từ</span>
+            </div>
+          </div>
+
+          <!-- Global Search Command -->
+          <div class="search-box" id="searchBox">
+            <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+            </svg>
+            <input type="text" id="searchInput" placeholder="Tra từ nhanh (Ctrl + K)..." autocomplete="off">
+            <kbd class="search-kbd">Ctrl K</kbd>
+            <div id="searchResults" class="search-results hidden"></div>
+          </div>
+
+          <!-- Accent Toggle (US/UK) -->
+          <button id="accentToggle" class="icon-pill-btn" onclick="app.toggleAccent()" title="Chuyển giọng đọc Anh-Mỹ (US) / Anh-Anh (UK)">
+            <span id="accentFlag">🇺🇸</span>
+            <span id="accentLabel" class="mono-text">US</span>
+          </button>
+
+          <!-- Theme Toggle -->
+          <button id="themeToggle" class="theme-toggle" aria-label="Đổi giao diện Sáng/Tối" title="Đổi giao diện Sáng / Tối">
+            <svg class="sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+            </svg>
+            <svg class="moon-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- Content Views -->
+      <div id="viewContainer" class="view-container">
+        <!-- ==================== DASHBOARD VIEW ==================== -->
+        <section id="dashboardView" class="view active">
+          <!-- Hero Banner -->
+          <div class="dashboard-hero glass-card">
+            <div class="hero-left">
+              <div class="hero-greeting-badge" id="heroGreetingBadge">✨ Chào buổi tối, Chiến binh TOEIC!</div>
+              <h1>Chinh phục <span class="gradient-text">Hackers TOEIC</span></h1>
+              <p>Học thông minh hơn với ngữ cảnh Part 5, lặp lại ngắt quãng SM-2 và luyện nghe phản xạ tự động.</p>
+              <div class="hero-cta-row">
+                <button class="btn btn-primary btn-lg" onclick="app.startSmartStudy()">
+                  <span>⚡ Học thông minh ngay</span>
+                </button>
+                <button class="btn btn-secondary btn-lg" onclick="app.navigateTo('quiz')">
+                  <span>🎯 Luyện Part 5 Cloze</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Word of the Day Card inside Hero -->
+            <div class="wotd-card" id="wotdCard">
+              <div class="wotd-header">
+                <span class="wotd-badge">💡 TỪ VỰNG HÔM NAY</span>
+                <div class="wotd-actions">
+                  <button class="wotd-icon-btn" onclick="app.speakWotd()" title="Nghe phát âm">🔊</button>
+                  <button class="wotd-icon-btn" onclick="app.refreshWotd()" title="Đổi từ khác">🔄</button>
+                </div>
+              </div>
+              <div class="wotd-word-row">
+                <span class="wotd-word" id="wotdWord">prospective</span>
+                <span class="wotd-day" id="wotdDay">Day 01</span>
+              </div>
+              <div class="wotd-meaning" id="wotdMeaning">tiềm năng, tương lai</div>
+              <div class="wotd-example" id="wotdExample">"We are organizing a meeting for prospective clients."</div>
+              <button class="wotd-detail-btn" id="wotdDetailBtn">Xem chi tiết & Ghi chú →</button>
+            </div>
+          </div>
+
+          <!-- KPI Stats Grid -->
+          <div class="hero-stats">
+            <div class="stat-card glass-card" onclick="app.navigateTo('vocabulary')" style="cursor:pointer">
+              <div class="stat-icon" style="background: linear-gradient(135deg, #6366f1, #8b5cf6)">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+              </div>
+              <div class="stat-info">
+                <span class="stat-value mono-text" id="totalWords">0</span>
+                <span class="stat-label">Tổng số từ vựng</span>
+              </div>
+            </div>
+            <div class="stat-card glass-card" onclick="app.filterByStatusAndGo('learned')" style="cursor:pointer">
+              <div class="stat-icon" style="background: linear-gradient(135deg, #10b981, #059669)">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              </div>
+              <div class="stat-info">
+                <span class="stat-value mono-text" id="learnedWords">0</span>
+                <span class="stat-label">Từ đã thuộc</span>
+              </div>
+            </div>
+            <div class="stat-card glass-card" onclick="app.filterByStatusAndGo('starred')" style="cursor:pointer">
+              <div class="stat-icon" style="background: linear-gradient(135deg, #f43f5e, #ec4899)">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </div>
+              <div class="stat-info">
+                <span class="stat-value mono-text" id="starredWords">0</span>
+                <span class="stat-label">Từ gắn sao (Khó)</span>
+              </div>
+            </div>
+            <div class="stat-card glass-card" onclick="app.navigateTo('srs')" style="cursor:pointer">
+              <div class="stat-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706)">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+              </div>
+              <div class="stat-info">
+                <div style="display:flex; align-items:baseline; gap:0.4rem;">
+                  <span class="stat-value mono-text" id="streakDays">0</span>
+                  <span style="font-size:0.75rem; color:var(--warning); font-weight:700;">🔥 Chuỗi ngày</span>
+                </div>
+                <span class="stat-label" id="dashDueLabel">0 từ cần ôn SRS</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Smart Analytics Row: Mastery Breakdown + Weak Words Radar -->
+          <div class="analytics-row">
+            <div class="dashboard-card glass-card">
+              <div class="card-header">
+                <h3>📈 Phân tích mức độ thành thạo theo cấp độ</h3>
+                <span class="card-subtitle">Ước tính điểm từ vựng TOEIC: <strong id="estimatedToeicScore" class="gradient-text">450+</strong></span>
+              </div>
+              <div class="card-body">
+                <div class="category-mastery-list" id="categoryMasteryList">
+                  <!-- Populated by JS -->
+                </div>
+              </div>
+            </div>
+
+            <div class="dashboard-card glass-card">
+              <div class="card-header">
+                <h3>🎯 Chế độ Luyện tập Thông minh</h3>
+              </div>
+              <div class="card-body">
+                <div class="quick-actions-grid">
+                  <button class="qa-card-btn" onclick="app.navigateTo('flashcards')">
+                    <div class="qa-icon" style="background: linear-gradient(135deg, #818cf8, #6366f1)">🃏</div>
+                    <div class="qa-text">
+                      <strong>Flashcards 3D & Auto-Play</strong>
+                      <span>Lật thẻ, nghe phát âm tự động</span>
+                    </div>
+                  </button>
+                  <button class="qa-card-btn" onclick="app.startSmartQuiz('cloze')">
+                    <div class="qa-icon" style="background: linear-gradient(135deg, #38bdf8, #0284c7)">🧩</div>
+                    <div class="qa-text">
+                      <strong>TOEIC Part 5 Điền Từ</strong>
+                      <span>Ẩn từ trong câu ví dụ thực tế</span>
+                    </div>
+                  </button>
+                  <button class="qa-card-btn" onclick="app.startSmartDrill('dictation')">
+                    <div class="qa-icon" style="background: linear-gradient(135deg, #34d399, #059669)">🎧</div>
+                    <div class="qa-text">
+                      <strong>Luyện Nghe Chính Tả</strong>
+                      <span>Nghe phát âm và gõ lại từ tiếng Anh</span>
+                    </div>
+                  </button>
+                  <button class="qa-card-btn" onclick="app.navigateTo('matchgame')">
+                    <div class="qa-icon" style="background: linear-gradient(135deg, #f472b6, #db2777)">⚡</div>
+                    <div class="qa-text">
+                      <strong>Phản Xạ Ghép Thẻ</strong>
+                      <span>Đua thời gian nối cặp Anh - Việt</span>
+                    </div>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Daily Progress & Weak Words / Recent Activity -->
+          <div class="dashboard-grid">
+            <div class="dashboard-card glass-card">
+              <div class="card-header">
+                <h3>📅 Tiến độ 30 Ngày (Hackers TOEIC)</h3>
+                <button class="btn btn-secondary btn-sm" onclick="app.navigateTo('vocabulary')">Xem tất cả →</button>
+              </div>
+              <div class="card-body" id="dailyProgressGrid">
+                <!-- Generated -->
+              </div>
+            </div>
+
+            <div class="dashboard-side-col">
+              <!-- Weakest Words Alert Card -->
+              <div class="dashboard-card glass-card">
+                <div class="card-header">
+                  <h3>⚠️ Từ vựng hay quên / Cần chú ý</h3>
+                  <button class="btn btn-secondary btn-sm" onclick="app.reviewWeakWords()">Ôn ngay</button>
+                </div>
+                <div class="card-body" id="weakWordsContainer">
+                  <!-- Generated by JS -->
+                </div>
+              </div>
+
+              <!-- Recent Activity -->
+              <div class="dashboard-card glass-card">
+                <div class="card-header">
+                  <h3>🕒 Hoạt động gần đây</h3>
+                </div>
+                <div class="card-body" id="recentActivity">
+                  <div class="empty-state">
+                    <p>Hãy bắt đầu học để ghi nhận hoạt động của bạn!</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== VOCABULARY VIEW ==================== -->
+        <section id="vocabularyView" class="view">
+          <div class="vocab-toolbar glass-card">
+            <div class="vocab-filters">
+              <div class="filter-item">
+                <label>Ngày học</label>
+                <select id="dayFilter" class="filter-select">
+                  <option value="all">Tất cả Days</option>
+                </select>
+              </div>
+              <div class="filter-item">
+                <label>Cấp độ mục tiêu</label>
+                <select id="categoryFilter" class="filter-select">
+                  <option value="all">Tất cả cấp độ</option>
+                  <option value="mainWords">Main Words (600+)</option>
+                  <option value="basicWords">Basic Words (Nền tảng)</option>
+                  <option value="level800Words">Level 800 (Nâng cao)</option>
+                  <option value="level900Words">Level 900+ (Chuyên sâu)</option>
+                </select>
+              </div>
+              <div class="filter-item">
+                <label>Trạng thái</label>
+                <select id="statusFilter" class="filter-select">
+                  <option value="all">Tất cả trạng thái</option>
+                  <option value="unlearned">📖 Chưa thuộc</option>
+                  <option value="learned">✅ Đã thuộc</option>
+                  <option value="starred">⭐ Đánh dấu sao</option>
+                  <option value="hasnote">📝 Có ghi chú cá nhân</option>
+                </select>
+              </div>
+              <div class="filter-item filter-search-local">
+                <label>Lọc nhanh</label>
+                <input type="text" id="vocabLocalSearch" class="filter-input" placeholder="Tìm từ, nghĩa, câu ví dụ..." oninput="app.renderVocabGrid()">
+              </div>
+            </div>
+
+            <div class="vocab-toolbar-bottom">
+              <div class="vocab-count-info">
+                Hiển thị <strong id="filteredCount" class="mono-text">0</strong> từ vựng
+              </div>
+              <div class="vocab-actions-right">
+                <button class="btn btn-secondary btn-sm" onclick="app.flashcardFilteredWords()" title="Học Flashcard với danh sách đang lọc">
+                  🃏 Học Flashcards
+                </button>
+                <button class="btn btn-primary btn-sm" onclick="app.testFilteredWords()" title="Làm bài kiểm tra với danh sách đang lọc">
+                  ✏️ Kiểm tra các từ này
+                </button>
+                <div class="vocab-view-modes">
+                  <button class="view-mode active" data-mode="grid" id="gridViewBtn" title="Chế độ lưới">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                  </button>
+                  <button class="view-mode" data-mode="list" id="listViewBtn" title="Chế độ danh sách chi tiết">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="4" width="18" height="3" rx="1"/><rect x="3" y="11" width="18" height="3" rx="1"/><rect x="3" y="18" width="18" height="3" rx="1"/></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="vocabGrid" class="vocab-grid">
+            <!-- Generated -->
+          </div>
+          <div id="vocabLoadMoreWrap" class="load-more-wrap hidden">
+            <button class="btn btn-secondary btn-lg" id="vocabLoadMoreBtn" onclick="app.loadMoreVocab()">
+              Hiển thị thêm từ vựng ↓
+            </button>
+          </div>
+        </section>
+
+        <!-- ==================== FLASHCARDS VIEW ==================== -->
+        <section id="flashcardsView" class="view">
+          <div class="flashcard-controls glass-card">
+            <select id="flashcardDayFilter" class="filter-select">
+              <option value="all">Tất cả Days</option>
+            </select>
+            <select id="flashcardCategoryFilter" class="filter-select">
+              <option value="all">Tất cả danh mục</option>
+              <option value="mainWords">Main Words (600)</option>
+              <option value="basicWords">Basic Words</option>
+              <option value="level800Words">Level 800</option>
+              <option value="level900Words">Level 900+</option>
+            </select>
+            <select id="flashcardStatusFilter" class="filter-select" onchange="app.loadFlashcards()">
+              <option value="all">Tất cả trạng thái</option>
+              <option value="unlearned">📖 Chưa thuộc</option>
+              <option value="starred">⭐ Đánh dấu sao</option>
+              <option value="learned">✅ Đã thuộc</option>
+            </select>
+            <div class="fc-search-wrapper">
+              <input type="text" id="fcSearchInput" list="fcSearchList" class="filter-input" placeholder="🔍 Nhập từ hoặc số thứ tự thẻ..." onchange="app.searchAndJumpFlashcard(this.value)">
+              <datalist id="fcSearchList"></datalist>
+            </div>
+            <div class="fc-control-btns">
+              <button class="btn btn-secondary" id="fcAutoPlayBtn" onclick="app.toggleAutoPlayFlashcards()" title="Tự động phát âm và chuyển thẻ">
+                ▶️ Tự động chạy
+              </button>
+              <button class="btn btn-primary" id="shuffleBtn" onclick="app.shuffleFlashcards()">
+                🔀 Trộn thẻ
+              </button>
+            </div>
+          </div>
+
+          <div class="flashcard-area">
+            <button class="flashcard-nav-btn" id="prevCard" onclick="app.prevFlashcard()" title="Thẻ trước (Phím ←)">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+
+            <div class="flashcard-stage">
+              <div class="flashcard-wrapper">
+                <div id="flashcard" class="flashcard" onclick="app.flipCard()">
+                  <!-- Front -->
+                  <div class="flashcard-front glass-card">
+                    <div class="fc-top-bar">
+                      <span class="flashcard-category" id="fcCategory">Main 600</span>
+                      <span class="fc-day-tag" id="fcDayTag">Day 01</span>
+                    </div>
+                    <div class="flashcard-word" id="fcWord">resume</div>
+                    <div class="fc-part-tag" id="fcPartTag"></div>
+                    <div class="flashcard-hint">
+                      <span>Nhấn <kbd>Space</kbd> hoặc Click để lật mặt sau</span>
+                    </div>
+                  </div>
+                  <!-- Back -->
+                  <div class="flashcard-back glass-card">
+                    <div class="fc-top-bar">
+                      <span class="fc-word-small" id="fcWordBack">resume</span>
+                      <span class="fc-day-tag" id="fcDayTagBack">Day 01</span>
+                    </div>
+                    <div class="flashcard-vietnamese" id="fcVietnamese">sơ yếu lý lịch</div>
+                    <div class="flashcard-antonym" id="fcAntonym"></div>
+                    <div class="flashcard-example">
+                      <p id="fcExampleEn" class="example-en"></p>
+                      <p id="fcExampleVi" class="example-vi"></p>
+                    </div>
+                    <div class="fc-note-preview hidden" id="fcNotePreview"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="fc-bottom-bar">
+                <div class="flashcard-progress">
+                  <div class="fc-jump-box" title="Nhập số thứ tự thẻ bất kỳ để nhảy tới ngay">
+                    <span class="fc-jump-label">Thẻ</span>
+                    <input type="number" id="fcJumpNumberInput" class="fc-jump-input mono-text" min="1" value="1"
+                           onfocus="this.select()"
+                           onchange="app.jumpToFlashcardNumber(this.value)"
+                           onkeydown="if(event.key==='Enter'){event.preventDefault(); app.jumpToFlashcardNumber(this.value); this.blur();}">
+                    <span class="fc-jump-slash mono-text">/</span>
+                    <span id="fcTotalCount" class="fc-total-count mono-text">40</span>
+                  </div>
+                  <div class="fc-mini-bar">
+                    <div id="fcProgressFill" class="fc-mini-bar-fill" style="width: 2.5%"></div>
+                  </div>
+                </div>
+
+                <div class="flashcard-actions">
+                  <button class="fc-action-btn learned-btn" onclick="app.markLearned()" title="Đánh dấu Đã thuộc (Phím L)">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                    <span>Đã thuộc</span>
+                  </button>
+                  <button class="fc-action-btn star-btn" onclick="app.toggleStar()" title="Gắn sao từ khó (Phím S)">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    <span>Gắn sao</span>
+                  </button>
+                  <button class="fc-action-btn speak-btn" onclick="app.speakWord()" title="Phát âm (Phím V)">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                    <span>Phát âm</span>
+                  </button>
+                  <button class="fc-action-btn note-btn" onclick="app.openCurrentFlashcardModal()" title="Chi tiết & Ghi chú">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    <span>Ghi chú</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <button class="flashcard-nav-btn" id="nextCard" onclick="app.nextFlashcard()" title="Thẻ tiếp theo (Phím →)">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+        </section>
+
+        <!-- ==================== QUIZ & PART 5 CLOZE VIEW ==================== -->
+        <section id="quizView" class="view">
+          <div id="quizSetup" class="quiz-setup">
+            <div class="quiz-setup-card glass-card">
+              <button class="top-back-btn" onclick="app.navigateTo('dashboard')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                Quay lại
+              </button>
+              <div class="setup-badge">TOEIC TEST SIMULATOR</div>
+              <h2>🎯 Trắc Nghiệm & Luyện Part 5</h2>
+              <p>Kiểm tra phản xạ từ vựng hoặc luyện điền từ vào chỗ trống theo chuẩn đề thi TOEIC Reading Part 5</p>
+              <div class="quiz-options">
+                <div class="quiz-option-group">
+                  <label>Chế độ kiểm tra thông minh</label>
+                  <select id="quizType" class="filter-select">
+                    <option value="cloze">🧩 TOEIC Part 5 Cloze (Điền từ vào câu ví dụ)</option>
+                    <option value="en-vi">🇬🇧 ➔ 🇻🇳 Tiếng Anh sang Tiếng Việt</option>
+                    <option value="vi-en">🇻🇳 ➔ 🇬🇧 Tiếng Việt sang Tiếng Anh</option>
+                    <option value="audio-vi">🎧 Nghe phát âm ➔ Chọn nghĩa Tiếng Việt</option>
+                    <option value="mixed">🔥 Hỗn hợp thông minh (Tổng hợp cả 4 dạng)</option>
+                  </select>
+                </div>
+                <div class="quiz-option-row">
+                  <div class="quiz-option-group">
+                    <label>Chọn Day</label>
+                    <select id="quizDayFilter" class="filter-select">
+                      <option value="all">Tất cả Days</option>
+                    </select>
+                  </div>
+                  <div class="quiz-option-group">
+                    <label>Cấp độ từ</label>
+                    <select id="quizCategoryFilter" class="filter-select">
+                      <option value="all">Tất cả cấp độ</option>
+                      <option value="mainWords">Main Words (600)</option>
+                      <option value="basicWords">Basic Words</option>
+                      <option value="level800Words">Level 800</option>
+                      <option value="level900Words">Level 900+</option>
+                    </select>
+                  </div>
+                  <div class="quiz-option-group">
+                    <label>Số câu hỏi</label>
+                    <select id="quizCountFilter" class="filter-select">
+                      <option value="10">10 câu (Nhanh)</option>
+                      <option value="20" selected>20 câu (Tiêu chuẩn)</option>
+                      <option value="30">30 câu (Chuyên sâu)</option>
+                      <option value="50">50 câu (Thử thách)</option>
+                      <option value="999">Tất cả trong bộ lọc</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <button class="btn btn-primary btn-lg" style="width:100%" onclick="app.startQuiz()">Bắt đầu làm bài 🚀</button>
+            </div>
+          </div>
+
+          <div id="quizActive" class="quiz-active hidden">
+            <div class="quiz-header glass-card">
+              <button class="top-back-btn" onclick="app.quitQuiz()" style="margin-bottom:0; padding: 0.4rem 0.9rem;">
+                ✕ Thoát
+              </button>
+              <div class="quiz-progress-info">
+                <div class="quiz-progress-top">
+                  <span id="quizQuestionNum" class="mono-text">1 / 20</span>
+                  <span id="quizModeBadge" class="badge category">Part 5 Cloze</span>
+                </div>
+                <div class="quiz-progress-bar">
+                  <div id="quizProgressFill" class="quiz-progress-fill" style="width:5%"></div>
+                </div>
+              </div>
+              <div class="quiz-score mono-text">Điểm: <span id="quizScore">0</span></div>
+            </div>
+
+            <div class="quiz-card glass-card">
+              <div class="quiz-question" id="quizQuestion"></div>
+              <div class="quiz-answers" id="quizAnswers"></div>
+              <div id="quizExplanation" class="quiz-explanation hidden"></div>
+              <button id="quizNextBtn" class="btn btn-primary btn-lg quiz-next-btn hidden" onclick="app.nextQuizQuestion()">
+                Câu tiếp theo (Enter) →
+              </button>
+            </div>
+          </div>
+
+          <div id="quizResult" class="quiz-result hidden">
+            <div class="quiz-result-card glass-card">
+              <div class="result-icon" id="resultIcon">🎉</div>
+              <h2 id="resultTitle">Hoàn thành xuất sắc!</h2>
+              <div class="result-percent mono-text" id="resultPercent">90%</div>
+              <div class="result-score">
+                Đúng <strong id="resultScore">18</strong> / <span id="resultTotal">20</span> câu
+              </div>
+              <div class="result-message" id="resultMessage"></div>
+              <div id="quizMistakesWrap" class="quiz-mistakes-wrap hidden">
+                <h4>📌 Các từ cần xem lại trong bài vừa rồi:</h4>
+                <div id="quizMistakesList" class="quiz-mistakes-list"></div>
+              </div>
+              <div class="result-actions">
+                <button class="btn btn-primary btn-lg" onclick="app.startQuiz()">Làm lại đề mới 🔄</button>
+                <button class="btn btn-secondary btn-lg" onclick="app.showQuizSetup()">Đổi cài đặt ⚙️</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== VOCAB DRILL & DICTATION VIEW ==================== -->
+        <section id="vocabdrillView" class="view">
+          <!-- Setup Screen -->
+          <div id="drillSetup" class="drill-setup">
+            <div class="drill-setup-card glass-card">
+              <button class="top-back-btn" onclick="app.navigateTo('dashboard')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                Quay lại
+              </button>
+              <div class="drill-setup-icon">✍️</div>
+              <h2>Luyện Gõ Từ & Nghe Chính Tả</h2>
+              <p>Chủ động nhớ mặt chữ, luyện nghe phát âm chuẩn TOEIC hoặc dịch nghĩa tương đương</p>
+              <div class="drill-options">
+                <div class="drill-option-group">
+                  <label>Chế độ luyện tập</label>
+                  <select id="drillModeFilter" class="filter-select">
+                    <option value="en-to-vi">🇬🇧 ➔ 🇻🇳 Nhìn từ Tiếng Anh — Gõ nghĩa Tiếng Việt</option>
+                    <option value="vi-to-en">🇻🇳 ➔ 🇬🇧 Nhìn nghĩa Tiếng Việt — Gõ từ Tiếng Anh (Spelling)</option>
+                    <option value="dictation">🎧 Luyện Nghe Chính Tả (Nghe âm thanh — Gõ từ Tiếng Anh)</option>
+                  </select>
+                </div>
+                <div class="drill-option-group">
+                  <label>Chọn Day (Có thể chọn nhiều Day cùng lúc)</label>
+                  <div class="drill-day-picker" id="drillDayPicker">
+                    <button class="drill-day-chip active" data-day="all">Tất cả</button>
+                    <!-- Generated by JS -->
+                  </div>
+                </div>
+                <div class="quiz-option-row">
+                  <div class="drill-option-group">
+                    <label>Danh mục từ</label>
+                    <select id="drillCategoryFilter" class="filter-select">
+                      <option value="all">Tất cả danh mục</option>
+                      <option value="mainWords">Main Words (600)</option>
+                      <option value="basicWords">Basic Words</option>
+                      <option value="level800Words">Level 800</option>
+                      <option value="level900Words">Level 900+</option>
+                    </select>
+                  </div>
+                  <div class="drill-option-group">
+                    <label>Trạng thái</label>
+                    <select id="drillStatusFilter" class="filter-select">
+                      <option value="all">Tất cả trạng thái</option>
+                      <option value="unlearned">📖 Chưa thuộc</option>
+                      <option value="learned">✅ Đã thuộc</option>
+                      <option value="starred">⭐ Có gắn sao</option>
+                    </select>
+                  </div>
+                  <div class="drill-option-group">
+                    <label>Số lượng từ</label>
+                    <select id="drillCount" class="filter-select">
+                      <option value="10">10 từ</option>
+                      <option value="20" selected>20 từ</option>
+                      <option value="30">30 từ</option>
+                      <option value="50">50 từ</option>
+                      <option value="999">Tất cả</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <button class="btn btn-primary btn-lg drill-start-btn" onclick="app.startVocabDrill()">Bắt đầu luyện tập 🚀</button>
+            </div>
+          </div>
+
+          <!-- Active Drill Screen -->
+          <div id="drillActive" class="drill-active hidden">
+            <div class="drill-header glass-card">
+              <button class="top-back-btn" onclick="app.quitDrill()" style="margin-bottom:0; padding: 0.4rem 0.8rem;">
+                ✕ Thoát
+              </button>
+              <div class="drill-progress-info">
+                <span id="drillProgressText" class="mono-text">1 / 20</span>
+                <div class="drill-progress-track">
+                  <div id="drillProgressFill" class="drill-progress-fill" style="width:5%"></div>
+                </div>
+              </div>
+              <div class="drill-score-area mono-text">
+                <span class="drill-score-label">✅ <strong id="drillCorrectCount">0</strong></span>
+                <span class="drill-score-label">❌ <strong id="drillWrongCount">0</strong></span>
+              </div>
+            </div>
+
+            <div class="drill-card-wrapper">
+              <div class="drill-card glass-card" id="drillCard">
+                <div class="drill-card-top">
+                  <div class="drill-category-badge" id="drillCategoryBadge">Main Words</div>
+                  <div class="drill-day-badge" id="drillDayBadge">Day 01</div>
+                </div>
+
+                <div class="drill-prompt-area">
+                  <div class="drill-english-word" id="drillEnglishWord">resume</div>
+                  <button class="drill-audio-big-btn hidden" id="drillAudioBigBtn" onclick="app.speakCurrentDrillWord()">
+                    🔊 Nghe lại phát âm
+                  </button>
+                  <div class="drill-phonetic" id="drillPhonetic"></div>
+                </div>
+
+                <div class="drill-input-area">
+                  <div class="drill-input-header">
+                    <label class="drill-input-label" id="drillInputLabel">Nhập nghĩa tiếng Việt:</label>
+                    <button class="drill-hint-btn" onclick="app.giveDrillHint()" title="Gợi ý chữ cái đầu">💡 Gợi ý</button>
+                  </div>
+                  <div class="drill-input-wrapper">
+                    <input type="text" id="drillInput" class="drill-input" placeholder="Gõ câu trả lời tại đây..." autocomplete="off" autocorrect="off" spellcheck="false">
+                    <button class="drill-submit-btn" id="drillSubmitBtn" onclick="app.submitDrillAnswer()">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <polyline points="9 18 15 12 9 6"/>
+                      </svg>
+                    </button>
+                  </div>
+                  <div class="drill-feedback hidden" id="drillFeedback">
+                    <div class="drill-feedback-icon" id="drillFeedbackIcon"></div>
+                    <div class="drill-feedback-content">
+                      <div class="drill-feedback-status" id="drillFeedbackStatus"></div>
+                      <div class="drill-feedback-correct" id="drillFeedbackCorrect"></div>
+                      <div class="drill-feedback-example" id="drillFeedbackExample"></div>
+                    </div>
+                  </div>
+                </div>
+                <button class="drill-next-btn hidden" id="drillNextBtn" onclick="app.nextDrillWord()">
+                  Từ tiếp theo (Enter) →
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Drill Result Screen -->
+          <div id="drillResult" class="drill-result hidden">
+            <div class="drill-result-card glass-card">
+              <div class="drill-result-emoji" id="drillResultEmoji">🎉</div>
+              <h2 id="drillResultTitle">Hoàn thành!</h2>
+              <div class="drill-result-stats">
+                <div class="drill-result-stat">
+                  <span class="drs-value mono-text" id="drillResultCorrect">0</span>
+                  <span class="drs-label">Đúng</span>
+                </div>
+                <div class="drill-result-stat">
+                  <span class="drs-value mono-text" id="drillResultWrong">0</span>
+                  <span class="drs-label">Sai</span>
+                </div>
+                <div class="drill-result-stat">
+                  <span class="drs-value mono-text" id="drillResultPercent">0%</span>
+                  <span class="drs-label">Chính xác</span>
+                </div>
+              </div>
+              <p class="drill-result-msg" id="drillResultMsg"></p>
+              <div class="drill-result-actions">
+                <button class="btn btn-primary btn-lg" onclick="app.startVocabDrill()">Thử lại 🔄</button>
+                <button class="btn btn-secondary btn-lg" onclick="app.showDrillSetup()">Cài đặt mới ⚙️</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== SPEED MATCH GAME VIEW ==================== -->
+        <section id="matchgameView" class="view">
+          <div class="match-container">
+            <div class="match-header glass-card">
+              <div class="match-header-left">
+                <h2>⚡ Phản Xạ Ghép Thẻ Tốc Độ</h2>
+                <p>Chọn 1 từ Tiếng Anh và 1 nghĩa Tiếng Việt tương ứng nhanh nhất có thể!</p>
+              </div>
+              <div class="match-controls">
+                <select id="matchDayFilter" class="filter-select">
+                  <option value="all">Tất cả Days</option>
+                </select>
+                <div class="match-stat-pill">
+                  <span>⏱️ Thời gian:</span>
+                  <strong id="matchTimer" class="mono-text">00.0s</strong>
+                </div>
+                <div class="match-stat-pill">
+                  <span>🏆 Kỷ lục:</span>
+                  <strong id="matchBestTime" class="mono-text">—</strong>
+                </div>
+                <button class="btn btn-primary" onclick="app.startMatchGame()">Chơi ván mới 🚀</button>
+              </div>
+            </div>
+
+            <div id="matchBoard" class="match-board">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== SPACED REPETITION (SRS) VIEW ==================== -->
+        <section id="srsView" class="view">
+          <!-- SRS Dashboard -->
+          <div id="srsDashboard" class="srs-dashboard">
+            <div class="srs-hero glass-card">
+              <div class="srs-hero-left">
+                <div class="srs-hero-icon">🧠</div>
+                <div>
+                  <h2>Spaced Repetition (Thuật toán SM-2)</h2>
+                  <p>Hệ thống lặp lại ngắt quãng khoa học — Tự động tính toán điểm rơi trí nhớ giúp bạn thuộc từ vĩnh viễn.</p>
+                </div>
+              </div>
+              <div class="srs-hero-stats">
+                <div class="srs-stat-chip">
+                  <span class="srs-stat-num mono-text" id="srsDueCount">0</span>
+                  <span class="srs-stat-lbl">Cần ôn hôm nay</span>
+                </div>
+                <div class="srs-stat-chip srs-stat-chip--new">
+                  <span class="srs-stat-num mono-text" id="srsNewCount">0</span>
+                  <span class="srs-stat-lbl">Từ mới tinh</span>
+                </div>
+                <div class="srs-stat-chip srs-stat-chip--done">
+                  <span class="srs-stat-num mono-text" id="srsMasteredCount">0</span>
+                  <span class="srs-stat-lbl">Đã thuộc sâu</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- SRS Review Due CTA -->
+            <div id="srsReviewCTA" class="srs-review-cta glass-card">
+              <div class="srs-cta-left">
+                <div class="srs-cta-icon" id="srsCtaIcon">🔔</div>
+                <div class="srs-cta-info">
+                  <h3 id="srsCtaTitle">Bạn có <span id="srsCtaDueNum">0</span> từ cần ôn lại!</h3>
+                  <p id="srsCtaDesc">Những từ này đã đến hạn ôn tập. Hãy ôn ngay để không quên nhé.</p>
+                </div>
+              </div>
+              <div class="srs-cta-buttons">
+                <button class="btn btn-primary btn-lg srs-cta-btn" id="srsCtaDueBtn" onclick="app.startSRSReviewDue()">
+                  Ôn lại ngay 🚀
+                </button>
+                <button class="btn btn-secondary srs-cta-btn-all" id="srsCtaAllBtn" onclick="app.startSRSReviewAll()">
+                  Ôn tất cả từ đã học
+                </button>
+              </div>
+            </div>
+
+            <div class="srs-options glass-card">
+              <h3>⚙️ Khởi tạo phiên học SRS tùy chỉnh</h3>
+              <div class="srs-option-row">
+                <div class="srs-option-group">
+                  <label>Chọn Day</label>
+                  <select id="srsDayFilter" class="filter-select">
+                    <option value="all">Tất cả Days</option>
+                  </select>
+                </div>
+                <div class="srs-option-group">
+                  <label>Danh mục</label>
+                  <select id="srsCategoryFilter" class="filter-select">
+                    <option value="all">Tất cả cấp độ</option>
+                    <option value="mainWords">Main Words (600)</option>
+                    <option value="basicWords">Basic Words</option>
+                    <option value="level800Words">Level 800</option>
+                    <option value="level900Words">Level 900+</option>
+                  </select>
+                </div>
+                <div class="srs-option-group">
+                  <label>Số từ mỗi phiên</label>
+                  <select id="srsSessionSize" class="filter-select">
+                    <option value="10">10 từ</option>
+                    <option value="20" selected>20 từ</option>
+                    <option value="30">30 từ</option>
+                    <option value="50">50 từ</option>
+                  </select>
+                </div>
+              </div>
+              <button class="btn btn-primary btn-lg srs-start-btn" onclick="app.startSRSSession()">
+                Bắt đầu phiên SRS 🚀
+              </button>
+            </div>
+
+            <!-- SRS Word Category Tracker -->
+            <div class="srs-tracker glass-card">
+              <div class="srs-tracker-header">
+                <h3>📊 Phân bổ trí nhớ theo nhóm phản hồi</h3>
+                <p>Nhấn vào từng nhóm để tra cứu danh sách từ vựng và lịch trình ôn tập chi tiết</p>
+              </div>
+              <div class="srs-tracker-grid">
+                <button class="srs-bucket-btn srs-bucket-again" onclick="app.showSRSWordList('again')">
+                  <span class="srs-bucket-icon">🔴</span>
+                  <span class="srs-bucket-label">Quên / Lại</span>
+                  <span class="srs-bucket-count mono-text" id="bucketCountAgain">0 từ</span>
+                  <span class="srs-bucket-hint">Cần học lại ngay</span>
+                </button>
+                <button class="srs-bucket-btn srs-bucket-hard" onclick="app.showSRSWordList('hard')">
+                  <span class="srs-bucket-icon">🟡</span>
+                  <span class="srs-bucket-label">Khó nhớ</span>
+                  <span class="srs-bucket-count mono-text" id="bucketCountHard">0 từ</span>
+                  <span class="srs-bucket-hint">Khoảng cách ngắn</span>
+                </button>
+                <button class="srs-bucket-btn srs-bucket-good" onclick="app.showSRSWordList('good')">
+                  <span class="srs-bucket-icon">🔵</span>
+                  <span class="srs-bucket-label">Nhớ tốt</span>
+                  <span class="srs-bucket-count mono-text" id="bucketCountGood">0 từ</span>
+                  <span class="srs-bucket-hint">Đang ghi nhớ ổn định</span>
+                </button>
+                <button class="srs-bucket-btn srs-bucket-easy" onclick="app.showSRSWordList('easy')">
+                  <span class="srs-bucket-icon">🟢</span>
+                  <span class="srs-bucket-label">Rất dễ</span>
+                  <span class="srs-bucket-count mono-text" id="bucketCountEasy">0 từ</span>
+                  <span class="srs-bucket-hint">Đã khắc sâu vào trí nhớ</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- SRS Word List Panel -->
+          <div id="srsWordListPanel" class="srs-word-list-panel hidden">
+            <div class="srs-wl-header glass-card" style="padding:1.5rem">
+              <div class="srs-wl-title-row">
+                <div class="srs-wl-title-info">
+                  <span class="srs-wl-badge" id="srsWlBadge">Lại</span>
+                  <h3 id="srsWlTitle">Danh sách từ nhóm Lại</h3>
+                  <span class="srs-wl-count mono-text" id="srsWlCount">0 từ</span>
+                </div>
+                <button class="srs-wl-close-btn" onclick="app.closeSRSWordList()">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                  </svg>
+                </button>
+              </div>
+              <div class="srs-wl-search-row">
+                <input type="text" id="srsWlSearch" class="srs-wl-search" placeholder="Tìm kiếm từ trong nhóm này..." oninput="app.filterSRSWordList(this.value)">
+              </div>
+            </div>
+            <div class="srs-wl-grid" id="srsWlGrid">
+              <!-- Generated by JS -->
+            </div>
+          </div>
+
+          <!-- SRS Active Session -->
+          <div id="srsActive" class="srs-active hidden">
+            <div class="srs-session-header glass-card">
+              <div class="srs-session-progress">
+                <div class="srs-session-info">
+                  <span id="srsSessionProgress" class="mono-text">1 / 20</span>
+                  <div class="srs-tags">
+                    <span class="srs-tag srs-tag--due" id="srsTagDue">Đến hạn</span>
+                    <span class="srs-tag srs-tag--new hidden" id="srsTagNew">Từ mới</span>
+                  </div>
+                </div>
+                <div class="srs-progress-bar-track">
+                  <div id="srsProgressFill" class="srs-progress-bar-fill" style="width:0%"></div>
+                </div>
+              </div>
+              <div class="srs-session-stats mono-text">
+                <span class="srs-mini-stat srs-mini-again" id="srsCountAgain">0 lại</span>
+                <span class="srs-mini-stat srs-mini-hard" id="srsCountHard">0 khó</span>
+                <span class="srs-mini-stat srs-mini-good" id="srsCountGood">0 tốt</span>
+                <span class="srs-mini-stat srs-mini-easy" id="srsCountEasy">0 dễ</span>
+              </div>
+              <button class="btn btn-secondary srs-quit-btn" onclick="app.quitSRS()">Thoát</button>
+            </div>
+
+            <div class="srs-card-area">
+              <div class="srs-card glass-card" id="srsCard">
+                <div class="srs-card-top">
+                  <span class="srs-category-badge" id="srsCategoryBadge">Main 600</span>
+                  <span class="srs-interval-badge mono-text" id="srsIntervalBadge">Ngày 1</span>
+                </div>
+                <!-- Front -->
+                <div id="srsCardFront" class="srs-card-front">
+                  <div class="srs-card-word" id="srsCardWord">resume</div>
+                  <div class="srs-tap-hint">Nhấn <kbd>Space</kbd> hoặc Click vào thẻ để xem đáp án</div>
+                </div>
+                <!-- Back -->
+                <div id="srsCardBack" class="srs-card-back hidden">
+                  <div style="display:flex; align-items:center; justify-content:center; gap:0.75rem;">
+                    <div class="srs-card-word" id="srsCardWordBack">resume</div>
+                    <button class="speak-btn-inline" onclick="event.stopPropagation(); app.speak(document.getElementById('srsCardWordBack').textContent)">🔊</button>
+                  </div>
+                  <div class="srs-card-meaning" id="srsCardMeaning">sơ yếu lý lịch</div>
+                  <div class="srs-card-antonym" id="srsCardAntonym"></div>
+                  <div class="srs-card-example" id="srsCardExample"></div>
+                  <div class="srs-rating-area">
+                    <p class="srs-rating-hint">Đánh giá mức độ nhớ của bạn (Phím 1 - 4):</p>
+                    <div class="srs-rating-btns" onclick="event.stopPropagation()">
+                      <button class="srs-rate-btn srs-rate-again" onclick="app.rateSRS(1)">
+                        <span class="srs-rate-label">1. Lại</span>
+                        <span class="srs-rate-sub mono-text">&lt; 1 ngày</span>
+                      </button>
+                      <button class="srs-rate-btn srs-rate-hard" onclick="app.rateSRS(2)">
+                        <span class="srs-rate-label">2. Khó</span>
+                        <span class="srs-rate-sub mono-text" id="srsIntervalHard">—</span>
+                      </button>
+                      <button class="srs-rate-btn srs-rate-good" onclick="app.rateSRS(3)">
+                        <span class="srs-rate-label">3. Tốt</span>
+                        <span class="srs-rate-sub mono-text" id="srsIntervalGood">—</span>
+                      </button>
+                      <button class="srs-rate-btn srs-rate-easy" onclick="app.rateSRS(4)">
+                        <span class="srs-rate-label">4. Dễ</span>
+                        <span class="srs-rate-sub mono-text" id="srsIntervalEasy">—</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SRS Session Result -->
+          <div id="srsResult" class="srs-result hidden">
+            <div class="srs-result-card glass-card">
+              <div class="srs-result-emoji" id="srsResultEmoji">🎉</div>
+              <h2 id="srsResultTitle">Phiên ôn tập hoàn thành!</h2>
+              <div class="srs-result-breakdown">
+                <div class="srb-item srb-again"><span id="srbAgain" class="mono-text">0</span><small>Lại</small></div>
+                <div class="srb-item srb-hard"><span id="srbHard" class="mono-text">0</span><small>Khó</small></div>
+                <div class="srb-item srb-good"><span id="srbGood" class="mono-text">0</span><small>Tốt</small></div>
+                <div class="srb-item srb-easy"><span id="srbEasy" class="mono-text">0</span><small>Dễ</small></div>
+              </div>
+              <p class="srs-result-next" id="srsResultNext"></p>
+              <div class="srs-result-actions">
+                <button class="btn btn-primary btn-lg" onclick="app.startSRSSession()">Phiên tiếp theo 🚀</button>
+                <button class="btn btn-secondary btn-lg" onclick="app.showSRSDashboard()">Về tổng quan</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Word Detail & Mnemonic Note Modal -->
+    <div id="wordModal" class="modal hidden">
+      <div class="modal-overlay" onclick="app.closeModal()"></div>
+      <div class="modal-content glass-card">
+        <button class="modal-close" onclick="app.closeModal()">&times;</button>
+        <div class="modal-body">
+          <div class="modal-badges-row">
+            <span class="badge category" id="modalCategoryBadge">Main 600</span>
+            <span class="badge" id="modalDayBadge">Day 01</span>
+            <span class="badge" id="modalPartBadge">RC / LC</span>
+          </div>
+          <div class="modal-word-header">
+            <h2 id="modalWord" class="modal-word"></h2>
+            <button class="speak-btn-inline" onclick="app.speakModalWord()" title="Nghe phát âm">
+              🔊
+            </button>
+          </div>
+          <div class="modal-meaning" id="modalMeaning"></div>
+          <div class="modal-antonym" id="modalAntonymSection">
+            <span class="label">Trái nghĩa (Antonym):</span> <strong id="modalAntonym"></strong>
+          </div>
+          <div class="modal-example">
+            <div class="example-label">Câu ví dụ thực tế TOEIC:</div>
+            <p class="example-en" id="modalExampleEn"></p>
+            <p class="example-vi" id="modalExampleVi"></p>
+          </div>
+
+          <!-- Personal Mnemonic / Note Box -->
+          <div class="modal-note-box">
+            <label for="modalNoteInput">📝 Ghi chú / Mẹo nhớ từ (Mnemonic) của riêng bạn:</label>
+            <textarea id="modalNoteInput" rows="2" placeholder="Ví dụ: Từ đồng nghĩa, cụm từ đi kèm (collocation), hoặc mẹo liên tưởng..." oninput="app.saveModalNote(this.value)"></textarea>
+          </div>
+
+          <div class="modal-actions">
+            <button class="btn btn-success" id="modalLearnedBtn" onclick="app.toggleModalLearned()">
+              ✅ Đánh dấu Đã thuộc
+            </button>
+            <button class="btn btn-warning" id="modalStarBtn" onclick="app.toggleModalStar()">
+              ⭐ Gắn sao
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Daily Goal Modal -->
+    <div id="goalModal" class="modal hidden">
+      <div class="modal-overlay" onclick="app.closeGoalModal()"></div>
+      <div class="modal-content glass-card" style="max-width:420px">
+        <button class="modal-close" onclick="app.closeGoalModal()">&times;</button>
+        <h3>🎯 Thiết lập Mục tiêu Hàng ngày</h3>
+        <p style="color:var(--text-secondary); font-size:0.9rem; margin-bottom:1.25rem;">
+          Chọn số lượng từ vựng bạn muốn chinh phục mỗi ngày để duy trì động lực:
+        </p>
+        <div class="goal-options-grid">
+          <button class="goal-opt-btn" onclick="app.setDailyGoalTarget(10)">🌱 10 từ / ngày (Nhẹ nhàng)</button>
+          <button class="goal-opt-btn" onclick="app.setDailyGoalTarget(20)">🔥 20 từ / ngày (Khuyên dùng)</button>
+          <button class="goal-opt-btn" onclick="app.setDailyGoalTarget(40)">⚡ 40 từ / ngày (Tăng tốc)</button>
+          <button class="goal-opt-btn" onclick="app.setDailyGoalTarget(60)">🏆 60 từ / ngày (Cấp tốc)</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile overlay -->
+    <div id="sidebarOverlay" class="sidebar-overlay" onclick="app.closeSidebar()"></div>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
