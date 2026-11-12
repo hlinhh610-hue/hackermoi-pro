@@ -30,6 +30,9 @@ class VocabHackerApp {
     this.drillIndex = 0;
     this.drillCorrect = 0;
     this.drillWrong = 0;
+    this.drillCorrectList = [];
+    this.drillWrongList = [];
+    this.drillReviewTab = 'wrong';
     this.drillAnswered = false;
     this.drillSelectedDays = ['all'];
     this.drillMode = 'en-to-vi';
@@ -840,6 +843,8 @@ class VocabHackerApp {
     this.drillIndex = 0;
     this.drillCorrect = 0;
     this.drillWrong = 0;
+    this.drillCorrectList = [];
+    this.drillWrongList = [];
     this.drillAnswered = false;
     this.drillMode = 'en-to-vi';
 
@@ -1686,6 +1691,7 @@ class VocabHackerApp {
       if (e.key === 'Escape') {
         this.closeModal();
         this.closeGoalModal();
+        this.closeDrillReviewModal();
         document.getElementById('searchResults')?.classList.add('hidden');
         return;
       }
@@ -1803,6 +1809,8 @@ VocabHackerApp.prototype.startVocabDrill = function() {
   this.drillIndex = 0;
   this.drillCorrect = 0;
   this.drillWrong = 0;
+  this.drillCorrectList = [];
+  this.drillWrongList = [];
   this.drillAnswered = false;
 
   document.getElementById('drillSetup').classList.add('hidden');
@@ -1921,8 +1929,17 @@ VocabHackerApp.prototype.submitDrillAnswer = function() {
   this.speak(word.english);
   document.getElementById('drillEnglishWord').textContent = word.english;
 
+  const answerRecord = {
+    word: word,
+    userAnswer: userAnswer,
+    isCorrect: isCorrect,
+    mode: this.drillMode,
+    timestamp: Date.now()
+  };
+
   if (isCorrect) {
     this.drillCorrect++;
+    this.drillCorrectList.push(answerRecord);
     this.incrementDailyGoal(1);
     input.className = 'drill-input correct';
     card.classList.add('correct-anim');
@@ -1933,6 +1950,7 @@ VocabHackerApp.prototype.submitDrillAnswer = function() {
     document.getElementById('drillFeedbackExample').textContent = word.exampleEn ? `“${word.exampleEn}”` : '';
   } else {
     this.drillWrong++;
+    this.drillWrongList.push(answerRecord);
     this.recordMistake(word._id);
     input.className = 'drill-input wrong';
     card.classList.add('wrong-anim');
@@ -1972,6 +1990,11 @@ VocabHackerApp.prototype.showDrillResult = function() {
   document.getElementById('drillResultWrong').textContent = wrong;
   document.getElementById('drillResultPercent').textContent = percent + '%';
 
+  const resWrongEl = document.getElementById('drillResWrongCount');
+  const resCorrectEl = document.getElementById('drillResCorrectCount');
+  if (resWrongEl) resWrongEl.textContent = wrong;
+  if (resCorrectEl) resCorrectEl.textContent = correct;
+
   let emoji, title, msg;
   if (percent >= 90) {
     emoji = '🏆'; title = 'Xuất sắc!'; msg = 'Bạn thực sự là bậc thầy từ vựng TOEIC!';
@@ -1999,6 +2022,176 @@ VocabHackerApp.prototype.showDrillSetup = function() {
 
 VocabHackerApp.prototype.quitDrill = function() {
   this.showDrillSetup();
+};
+
+// ==========================================
+// Drill Word Review (Xem từ đúng / sai)
+// ==========================================
+
+VocabHackerApp.prototype.escapeHtml = function(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+};
+
+VocabHackerApp.prototype.showDrillWordReview = function(tab) {
+  if (tab === 'correct' || tab === 'wrong') {
+    this.drillReviewTab = tab;
+  } else if (!this.drillReviewTab) {
+    this.drillReviewTab = (this.drillWrongList && this.drillWrongList.length > 0) ? 'wrong' : 'correct';
+  }
+
+  const modal = document.getElementById('drillReviewModal');
+  if (!modal) return;
+
+  const countWrongEl = document.getElementById('drillReviewCountWrong');
+  const countCorrectEl = document.getElementById('drillReviewCountCorrect');
+  if (countWrongEl) countWrongEl.textContent = (this.drillWrongList || []).length;
+  if (countCorrectEl) countCorrectEl.textContent = (this.drillCorrectList || []).length;
+
+  this.renderDrillReviewModal();
+  modal.classList.remove('hidden');
+};
+
+VocabHackerApp.prototype.closeDrillReviewModal = function() {
+  const modal = document.getElementById('drillReviewModal');
+  if (modal) modal.classList.add('hidden');
+};
+
+VocabHackerApp.prototype.switchDrillReviewTab = function(tab) {
+  this.drillReviewTab = tab;
+  this.renderDrillReviewModal();
+};
+
+VocabHackerApp.prototype.renderDrillReviewModal = function() {
+  const body = document.getElementById('drillReviewBody');
+  const tabWrong = document.getElementById('drillReviewTabWrong');
+  const tabCorrect = document.getElementById('drillReviewTabCorrect');
+  const countWrongEl = document.getElementById('drillReviewCountWrong');
+  const countCorrectEl = document.getElementById('drillReviewCountCorrect');
+  const subtitle = document.getElementById('drillReviewModalSubtitle');
+
+  const wrongList = this.drillWrongList || [];
+  const correctList = this.drillCorrectList || [];
+
+  if (countWrongEl) countWrongEl.textContent = wrongList.length;
+  if (countCorrectEl) countCorrectEl.textContent = correctList.length;
+
+  const isWrong = this.drillReviewTab === 'wrong';
+  if (tabWrong) tabWrong.classList.toggle('active', isWrong);
+  if (tabCorrect) tabCorrect.classList.toggle('active', !isWrong);
+
+  const list = isWrong ? wrongList : correctList;
+
+  if (subtitle) {
+    subtitle.textContent = isWrong
+      ? `Danh sách ${wrongList.length} từ bạn trả lời chưa chính xác`
+      : `Danh sách ${correctList.length} từ bạn đã trả lời chính xác`;
+  }
+
+  if (!body) return;
+
+  if (list.length === 0) {
+    body.innerHTML = `
+      <div class="drill-review-empty">
+        <div class="dre-icon">${isWrong ? '🎉' : '📝'}</div>
+        <h4>${isWrong ? 'Chưa có từ nào bị sai!' : 'Chưa có từ nào đúng'}</h4>
+        <p>${isWrong 
+          ? 'Thật xuất sắc! Bạn chưa gõ sai bất kỳ từ nào trong bài luyện hiện tại.' 
+          : 'Hãy tiếp tục gõ câu trả lời chính xác để tích luỹ từ đúng vào danh sách này nhé.'}</p>
+      </div>
+    `;
+    return;
+  }
+
+  body.innerHTML = list.map((item, idx) => {
+    const w = item.word;
+    const isStarred = !!(this.starred && this.starred[w._id]);
+    const catLabel = this.getCategoryLabel ? this.getCategoryLabel(w._category) : (w._category || '');
+    const userAnsEsc = this.escapeHtml(item.userAnswer || '(chưa nhập)');
+    const wordEnEsc = this.escapeHtml(w.english || '');
+    const wordViEsc = this.escapeHtml(w.vietnamese || '');
+    const phoneticEsc = this.escapeHtml(w.phonetic || '');
+    const exampleEnEsc = this.escapeHtml(w.exampleEn || '');
+    const exampleViEsc = this.escapeHtml(w.exampleVi || '');
+    const partEsc = this.escapeHtml(w.part || '');
+    const dayEsc = this.escapeHtml(w._day || '');
+
+    let modeLabel = 'Từ Anh sang Việt';
+    if (item.mode === 'vi-to-en') modeLabel = 'Từ Việt sang Anh';
+    else if (item.mode === 'dictation') modeLabel = 'Nghe chính tả';
+
+    return `
+      <div class="drill-review-item ${isWrong ? 'is-wrong' : 'is-correct'}">
+        <div class="dri-top">
+          <div class="dri-left">
+            <span class="dri-idx">#${idx + 1}</span>
+            <span class="dri-word">${wordEnEsc}</span>
+            ${phoneticEsc ? `<span class="dri-phonetic">${phoneticEsc}</span>` : ''}
+            <button type="button" class="dri-audio-btn" onclick="app.speak('${wordEnEsc.replace(/'/g, "\\'")}')" title="Phát âm từ này">
+              🔊
+            </button>
+          </div>
+          <div class="dri-right">
+            ${dayEsc ? `<span class="dri-badge dri-badge-day">${dayEsc}</span>` : ''}
+            ${catLabel ? `<span class="dri-badge dri-badge-cat">${catLabel}</span>` : ''}
+            ${partEsc ? `<span class="dri-badge dri-badge-part">${partEsc}</span>` : ''}
+            <button type="button" class="dri-star-btn ${isStarred ? 'active' : ''}" onclick="app.toggleReviewStar('${w._id}', this)" title="${isStarred ? 'Bỏ gắn sao' : 'Gắn sao từ này'}">
+              ${isStarred ? '⭐' : '☆'}
+            </button>
+          </div>
+        </div>
+
+        <div class="dri-meaning">
+          <span class="dri-meaning-label">Nghĩa:</span>
+          <span class="dri-meaning-text">${wordViEsc}</span>
+        </div>
+
+        <div class="dri-answer-box">
+          <div class="dri-ans-row">
+            <span class="dri-ans-title">Câu bạn đã gõ:</span>
+            <span class="dri-user-ans ${isWrong ? 'wrong' : 'correct'}">${isWrong ? '❌ ' : '✅ '}${userAnsEsc}</span>
+          </div>
+          ${isWrong ? `
+            <div class="dri-ans-row">
+              <span class="dri-ans-title">Đáp án chuẩn:</span>
+              <span class="dri-target-ans">
+                ${item.mode === 'en-to-vi' ? wordViEsc : `<strong>${wordEnEsc}</strong> — ${wordViEsc}`}
+              </span>
+            </div>
+          ` : ''}
+          <div class="dri-mode-tag">Chế độ: ${modeLabel}</div>
+        </div>
+
+        ${exampleEnEsc ? `
+          <div class="dri-example">
+            <div class="dri-example-en">“${exampleEnEsc}”</div>
+            ${exampleViEsc ? `<div class="dri-example-vi">${exampleViEsc}</div>` : ''}
+          </div>
+        ` : ''}
+
+        <div class="dri-actions">
+          <button type="button" class="btn btn-secondary btn-sm" onclick="app.openWordModal('${w._id}')">
+            📖 Tra cứu chi tiết
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+};
+
+VocabHackerApp.prototype.toggleReviewStar = function(wordId, btnEl) {
+  this.toggleStarById(wordId);
+  const isStarred = !!(this.starred && this.starred[wordId]);
+  if (btnEl) {
+    btnEl.classList.toggle('active', isStarred);
+    btnEl.textContent = isStarred ? '⭐' : '☆';
+    btnEl.title = isStarred ? 'Bỏ gắn sao' : 'Gắn sao từ này';
+  }
 };
 
 // ==========================================

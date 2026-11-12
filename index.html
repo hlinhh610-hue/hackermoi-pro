@@ -733,8 +733,14 @@
                 </div>
               </div>
               <div class="drill-score-area mono-text">
-                <span class="drill-score-label">✅ <strong id="drillCorrectCount">0</strong></span>
-                <span class="drill-score-label">❌ <strong id="drillWrongCount">0</strong></span>
+                <button type="button" class="drill-score-btn drill-score-correct" onclick="app.showDrillWordReview('correct')" title="Nhấn để xem danh sách từ đã làm đúng (✅)">
+                  <span>✅</span>
+                  <strong id="drillCorrectCount">0</strong>
+                </button>
+                <button type="button" class="drill-score-btn drill-score-wrong" onclick="app.showDrillWordReview('wrong')" title="Nhấn để xem danh sách từ làm sai (❌)">
+                  <span>❌</span>
+                  <strong id="drillWrongCount">0</strong>
+                </button>
               </div>
             </div>
 
@@ -788,13 +794,13 @@
               <div class="drill-result-emoji" id="drillResultEmoji">🎉</div>
               <h2 id="drillResultTitle">Hoàn thành!</h2>
               <div class="drill-result-stats">
-                <div class="drill-result-stat">
+                <div class="drill-result-stat clickable" onclick="app.showDrillWordReview('correct')" title="Nhấn để xem các từ đúng (✅)">
                   <span class="drs-value mono-text" id="drillResultCorrect">0</span>
-                  <span class="drs-label">Đúng</span>
+                  <span class="drs-label">Đúng (Xem ✅)</span>
                 </div>
-                <div class="drill-result-stat">
+                <div class="drill-result-stat clickable" onclick="app.showDrillWordReview('wrong')" title="Nhấn để xem các từ sai (❌)">
                   <span class="drs-value mono-text" id="drillResultWrong">0</span>
-                  <span class="drs-label">Sai</span>
+                  <span class="drs-label">Sai (Xem ❌)</span>
                 </div>
                 <div class="drill-result-stat">
                   <span class="drs-value mono-text" id="drillResultPercent">0%</span>
@@ -802,6 +808,18 @@
                 </div>
               </div>
               <p class="drill-result-msg" id="drillResultMsg"></p>
+              
+              <!-- Quick Review Buttons on Result Screen -->
+              <div id="drillResultReviewSection" class="drill-result-review-section">
+                <div class="dr-review-buttons">
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="app.showDrillWordReview('wrong')">
+                    ❌ Xem danh sách từ sai (<span id="drillResWrongCount" class="mono-text">0</span>)
+                  </button>
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="app.showDrillWordReview('correct')">
+                    ✅ Xem danh sách từ đúng (<span id="drillResCorrectCount" class="mono-text">0</span>)
+                  </button>
+                </div>
+              </div>
               <div class="drill-result-actions">
                 <button class="btn btn-primary btn-lg" onclick="app.startVocabDrill()">Thử lại 🔄</button>
                 <button class="btn btn-secondary btn-lg" onclick="app.showDrillSetup()">Cài đặt mới ⚙️</button>
@@ -1131,6 +1149,34 @@
           <button class="goal-opt-btn" onclick="app.setDailyGoalTarget(20)">🔥 20 từ / ngày (Khuyên dùng)</button>
           <button class="goal-opt-btn" onclick="app.setDailyGoalTarget(40)">⚡ 40 từ / ngày (Tăng tốc)</button>
           <button class="goal-opt-btn" onclick="app.setDailyGoalTarget(60)">🏆 60 từ / ngày (Cấp tốc)</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Drill Review Modal (Danh sách từ Đúng / Sai) -->
+    <div id="drillReviewModal" class="modal hidden">
+      <div class="modal-overlay" onclick="app.closeDrillReviewModal()"></div>
+      <div class="modal-content glass-card drill-review-modal-content">
+        <button class="modal-close" onclick="app.closeDrillReviewModal()" aria-label="Đóng">&times;</button>
+        <div class="drill-review-header">
+          <div class="drill-review-title-group">
+            <h3 id="drillReviewModalTitle">📋 Danh sách từ trong bài luyện</h3>
+            <span class="drill-review-sub-title" id="drillReviewModalSubtitle">Chi tiết kết quả làm bài của bạn</span>
+          </div>
+          <div class="drill-review-tabs">
+            <button type="button" class="drill-review-tab" id="drillReviewTabWrong" onclick="app.switchDrillReviewTab('wrong')">
+              <span>❌ Từ làm sai</span> (<strong id="drillReviewCountWrong">0</strong>)
+            </button>
+            <button type="button" class="drill-review-tab" id="drillReviewTabCorrect" onclick="app.switchDrillReviewTab('correct')">
+              <span>✅ Từ làm đúng</span> (<strong id="drillReviewCountCorrect">0</strong>)
+            </button>
+          </div>
+        </div>
+        <div class="drill-review-body" id="drillReviewBody">
+          <!-- Rendered dynamically -->
+        </div>
+        <div class="drill-review-footer">
+          <button type="button" class="btn btn-secondary" onclick="app.closeDrillReviewModal()">Đóng (Esc)</button>
         </div>
       </div>
     </div>
